@@ -13,10 +13,10 @@ function AthleteStats() {
   let athleteStatsUrl = `https://www.strava.com/api/v3/athletes/${context.user.id}/stats`;
   if (cookies.access_token && !stats) {
     asyncFetch(athleteStatsUrl, cookies.access_token)
-      .then(data => {
+      .then((data) => {
         return data.json();
       })
-      .then(stats => {
+      .then((stats) => {
         setStats(stats);
       });
     return <div>Loading Stats...</div>;
@@ -35,32 +35,34 @@ function Clubs() {
   const [cookies] = useCookies();
   const context = useContext(AuthContext);
   const [clubs, setClubs] = useState([]);
-  const [clubMembers, setClubMembers] = useState({});
+  // const [clubMembers, setClubMembers] = useState({});
   let usersClubs = context.user.clubs;
   if (cookies.access_token && !clubs.length) {
-    usersClubs.map(club => {
+    usersClubs.map((club) => {
       let clubDetailsUrl = `https://www.strava.com/api/v3/clubs/${club.id}`;
       return asyncFetch(clubDetailsUrl, cookies.access_token)
-        .then(data => {
+        .then((data) => {
           return data.json();
         })
-        .then(club => {
-          setClubs(clubs => [...clubs, club]);
+        .then((club) => {
+          if (club.member_count <= 150) {
+            setClubs((clubs) => [...clubs, club]);
+          }
         });
     });
-    usersClubs.map(club => {
-      let clubMembersUrl = `https://www.strava.com/api/v3/clubs/${club.id}/members`;
-      return asyncFetch(clubMembersUrl, cookies.access_token)
-        .then(data => {
-          return data.json();
-        })
-        .then(clubMembers => {
-          setClubMembers({ [club.id]: clubMembers });
-        });
-    });
+    // usersClubs.map(club => {
+    //   let clubMembersUrl = `https://www.strava.com/api/v3/clubs/${club.id}/members`;
+    //   return asyncFetch(clubMembersUrl, cookies.access_token)
+    //     .then(data => {
+    //       return data.json();
+    //     })
+    //     .then(clubMembers => {
+    //       setClubMembers({ [club.id]: clubMembers });
+    //     });
+    // });
   }
   return clubs.length !== 0
-    ? clubs.map(club => {
+    ? clubs.map((club) => {
         return (
           <Box key={club.id} my={2}>
             <Typography variant="h5"> {club.name}</Typography>

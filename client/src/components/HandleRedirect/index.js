@@ -23,20 +23,20 @@ let setTokensFromUrl = async () => {
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       }
     )
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         console.log("Success:", data);
         return {
           accessToken: data.access_token,
           refreshToken: data.refresh_token,
-          expiresAt: data.expires_at
+          expiresAt: data.expires_at,
         };
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error:", error);
       });
   }
@@ -46,24 +46,24 @@ let setTokensFromUrl = async () => {
 const HandleRedirect = () => {
   const [cookies, setCookie] = useCookies([]);
   React.useEffect(() => {
-    setTokensFromUrl().then(value => {
+    setTokensFromUrl().then((value) => {
       if (!value) {
         return;
       }
       setCookie("access_token", value.accessToken, {
         path: "/",
-        maxAge: 604800
+        maxAge: 604800,
       });
       setCookie("refresh_token", value.refreshToken, {
         path: "/",
-        maxAge: 604800
+        maxAge: 604800,
       });
       setCookie("expires_at", value.expiresAt, {
         path: "/",
-        maxAge: 604800
+        maxAge: 604800,
       });
     });
-  }, []);
+  }, [setCookie]);
   console.log("Cookies", cookies);
 
   // Use reresh_token to obtain new access token when it expires
@@ -75,14 +75,14 @@ const HandleRedirect = () => {
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       }
     );
     console.log("New Tokens: ", newTokens);
     return <Redirect to="/token"></Redirect>;
   }
-  return <Redirect to="/"></Redirect>;
+  return <Redirect to="/dashboard"></Redirect>;
 };
 
 export default HandleRedirect;

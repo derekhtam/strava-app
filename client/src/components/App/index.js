@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Header from "../Header";
+import Profile from "../Profile";
+import Tribes from "../Tribes";
 import Dashboard from "../Dashboard";
 import Login from "../Login";
 import HandleRedirect from "../HandleRedirect";
@@ -24,22 +27,22 @@ function AuthContextProvider({ children }) {
     setState({
       cookies: cookies,
       status: "pending",
-      loading: true
+      loading: true,
     });
 
     let athleteFetchUrl = "https://www.strava.com/api/v3/athlete";
 
     if (access_token && expires_at > currentTime) {
       asyncFetch(athleteFetchUrl, cookies.access_token)
-        .then(data => {
+        .then((data) => {
           return data.json();
         })
-        .then(user => {
+        .then((user) => {
           setState({
             user: user,
             status: "success",
             cookies: cookies,
-            loading: false
+            loading: false,
           });
           const userUID = String(user.uid);
           Firebase.signIntoFirebase(userUID);
@@ -49,7 +52,7 @@ function AuthContextProvider({ children }) {
         user: null,
         status: "error",
         cookies: cookies,
-        loading: false
+        loading: false,
       });
       // GET NEW ACCESS TOKEN
     }
@@ -71,16 +74,19 @@ export default function App() {
 
   React.useEffect(() => {
     callBackendAPI()
-      .then(res => setState({ data: res.express }))
-      .catch(err => console.log(err));
+      .then((res) => setState({ data: res.express }))
+      .catch((err) => console.log(err));
   }, []);
 
   return (
     <AuthContextProvider>
       <MuiThemeProvider theme={theme}>
         <Router>
+          <Header />
           <Switch>
-            <Route exact path="/" component={Dashboard}></Route>
+            <Route exact path="/dashboard" component={Dashboard}></Route>
+            <Route path="/profile" component={Profile}></Route>
+            <Route path="/tribes" component={Tribes}></Route>
             <Route exact path="/login" component={Login}></Route>
             <Route path="/token" component={HandleRedirect}></Route>
           </Switch>
